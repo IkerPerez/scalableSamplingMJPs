@@ -1,0 +1,67 @@
+
+
+# Read files
+trace1 <- read.csv("mcmc_chain_1.csv")
+trace2 <- read.csv("mcmc_chain_2.csv")
+trace3 <- read.csv("mcmc_chain_3.csv")
+trace4 <- read.csv("mcmc_chain_4.csv")
+trace5 <- read.csv("mcmc_chain_5.csv")
+trace6 <- read.csv("mcmc_chain_6.csv")
+trace7 <- read.csv("mcmc_chain_7.csv")
+trace8 <- read.csv("mcmc_chain_8.csv")
+
+burnin <- round(nrow(trace1)*0.1)
+thinning <- 1
+total <- nrow(trace1)
+
+library(coda)
+
+populationTop <- 20
+alpha <- 0.1 # birth rate for prey
+beta <- 2/populationTop*alpha # 0.005 # predator eating prey
+gamma <- 0.1 # death of predator
+delta <- 2/populationTop*gamma # 0.005 # birth rate predator
+
+i=1; mu <- alpha
+plot(density(trace1[-c(1:burnin),i]), main="beta"); lines(density(trace2[-c(1:burnin),i]), col="red"); 
+lines(density(trace3[-c(1:burnin),i]), col="green"); lines(density(trace4[-c(1:burnin),i]), col="yellow"); 
+lines(density(trace5[-c(1:burnin),i]), col="blue"); lines(density(trace6[-c(1:burnin),i]), col="orange"); 
+lines(density(trace7[-c(1:burnin),i]), col="brown"); lines(density(trace8[-c(1:burnin),i]), col="purple"); abline(v=mu,lty =2)
+
+i=2; mu <- beta
+plot(density(trace1[-c(1:burnin),i]), main="beta"); lines(density(trace2[-c(1:burnin),i]), col="red"); 
+lines(density(trace3[-c(1:burnin),i]), col="green"); lines(density(trace4[-c(1:burnin),i]), col="yellow"); 
+lines(density(trace5[-c(1:burnin),i]), col="blue"); lines(density(trace6[-c(1:burnin),i]), col="orange"); 
+lines(density(trace7[-c(1:burnin),i]), col="brown"); lines(density(trace8[-c(1:burnin),i]), col="purple"); abline(v=mu,lty =2)
+
+i=3; mu <- delta
+plot(density(trace1[-c(1:burnin),i]), main="beta"); lines(density(trace2[-c(1:burnin),i]), col="red"); 
+lines(density(trace3[-c(1:burnin),i]), col="green"); lines(density(trace4[-c(1:burnin),i]), col="yellow"); 
+lines(density(trace5[-c(1:burnin),i]), col="blue"); lines(density(trace6[-c(1:burnin),i]), col="orange"); 
+lines(density(trace7[-c(1:burnin),i]), col="brown"); lines(density(trace8[-c(1:burnin),i]), col="purple"); abline(v=mu,lty =2)
+
+i=4; mu <- gamma
+plot(density(trace1[-c(1:burnin),i]), main="beta"); lines(density(trace2[-c(1:burnin),i]), col="red"); 
+lines(density(trace3[-c(1:burnin),i]), col="green"); lines(density(trace4[-c(1:burnin),i]), col="yellow"); 
+lines(density(trace5[-c(1:burnin),i]), col="blue"); lines(density(trace6[-c(1:burnin),i]), col="orange"); 
+lines(density(trace7[-c(1:burnin),i]), col="brown"); lines(density(trace8[-c(1:burnin),i]), col="purple"); abline(v=mu,lty =2)
+
+# Effective samples - across 16 simulations (repeat twice)
+acf(trace1); acf(trace2); acf(trace3); acf(trace4)
+acf(trace5); acf(trace6); acf(trace7); acf(trace8)
+
+
+# Mean effective sample across variables...
+
+effsSamps1<- rbind(effectiveSize(as.mcmc(trace1)), effectiveSize(as.mcmc(trace2)), effectiveSize(as.mcmc(trace3)),  effectiveSize(as.mcmc(trace4)),
+              effectiveSize(as.mcmc(trace5)), effectiveSize(as.mcmc(trace6)), effectiveSize(as.mcmc(trace7)),  effectiveSize(as.mcmc(trace8)))
+effsSamps1 <- rowMeans(effsSamps1)
+
+
+# Min variable - effective sample 
+
+effsSamps2<- rbind(effectiveSize(as.mcmc(trace1)), effectiveSize(as.mcmc(trace2)), effectiveSize(as.mcmc(trace3)),  effectiveSize(as.mcmc(trace4)),
+               effectiveSize(as.mcmc(trace5)), effectiveSize(as.mcmc(trace6)), effectiveSize(as.mcmc(trace7)),  effectiveSize(as.mcmc(trace8)))
+effsSamps2 <- apply(effsSamps2,1,min)
+
+
